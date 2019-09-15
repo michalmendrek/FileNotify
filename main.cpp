@@ -27,13 +27,20 @@ struct epoll_event ev;
 
 
 if(inotifyFD == -1) {cout <<"inotify fault" << endl;}
+
 inotifyFileWD=inotify_add_watch(inotifyFD,"./plik.log",IN_CLOSE_WRITE);
+
 if(inotifyFileWD == -1) {cout <<"inotify fault" << endl; return 0;}
+
 if(epollFD <0 ) {cout << "Epoll fault" << endl;}
 
-ev.events=EPOLLIN|EPOLLOUT|EPOLLET;
+//ev.events=EPOLLIN|EPOLLOUT|EPOLLET;
+ev.events=EPOLLIN|EPOLLET;
+
 cfg = epoll_ctl(epollFD, EPOLL_CTL_ADD, inotifyFD, &ev);
+
 if (cfg < 0) {cout << "Epoll fault" << endl;}
+
 
 
 while(1)
@@ -62,10 +69,21 @@ for(p = buff; p < buff + numRead;)
  if(ret > 0 )
  {
   cout << "Modify done" << endl;
+   numRead = read(inotifyFD, buff, BUF_LEN);
+   for(p = buff; p < buff + numRead;)
+ {
+  event = (struct inotify_event *) p;
+  cout << "Event on file" << endl;
+  p+= sizeof(struct inotify_event) + event->len;
+ }
+
  } else if(ret <0) {cout << "Error in pooling" << endl;} else 
  {
   cout << "TimeOut" << endl;
  }
+
+
+
 
 }
 
