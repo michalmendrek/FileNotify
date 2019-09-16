@@ -65,7 +65,7 @@ for(p = buff; p < buff + numRead;)
 
 */
 
- ret = epoll_wait(epollFD, &ev, 100, 1000);
+ ret = epoll_wait(epollFD, &ev, 100, 100000);
  if(ret > 0 )
  {
   cout << "Modify done" << endl;
